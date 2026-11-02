@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-orange: #EA580C;
+    --color-black: #09090B;
+  }
+
+  body {
+    @apply bg-neutral-50 text-zinc-900 antialiased font-sans selection:bg-orange-100 selection:text-orange-950 overflow-x-hidden;
+    min-height: 100vh;
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-orange-500 ring-offset-2;
+  }
+}
+
+/* Crisp Clean Commercial Button Styles */
+.btn-orange {
+  @apply bg-orange-600 hover:bg-orange-700 text-white font-semibold transition-all shadow-sm active:scale-[0.98];
+}
+
+.btn-black {
+  @apply bg-zinc-900 hover:bg-black text-white font-semibold transition-all shadow-sm active:scale-[0.98];
+}
+
+.btn-outline {
+  @apply bg-white hover:bg-zinc-50 text-zinc-800 border border-zinc-200 font-semibold transition-all active:scale-[0.98];
+}
+
+/* Realistic Washing Machine Agitation Animation */
+@keyframes washSwirl {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(0.98); }
+  50% { transform: rotate(180deg) scale(1.02); }
+  75% { transform: rotate(270deg) scale(0.98); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes waterSlosh {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  50% { transform: translateY(-4px) scaleY(1.05); }
+}
+
+.wash-drum {
+  animation: washSwirl 6s ease-in-out infinite;
+}
+
+.water-slosh {
+  animation: waterSlosh 2.5s ease-in-out infinite;
+}
+
+/* Custom Clean Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F4F4F5;
+}
+::-webkit-scrollbar-thumb {
+  background: #D4D4D8;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A1A1AA;
+}

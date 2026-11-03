@@ -221,4 +221,19 @@ export const api = {
     });
     return handleResponse(res, 'Failed to update operational schedule');
   },
+
+  // Master Store Status (Open vs Closed)
+  async getStoreStatus(): Promise<{ isStoreOpen: boolean }> {
+    const res = await fetch(`${API_BASE}/store-status`, { headers: getAuthHeaders() });
+    return handleResponse<{ isStoreOpen: boolean }>(res, 'Failed to fetch store status');
+  },
+
+  async updateStoreStatus(isStoreOpen: boolean): Promise<{ success: boolean; isStoreOpen: boolean }> {
+    const res = await fetch(`${API_BASE}/store-status`, {
+      method: 'PATCH',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ isStoreOpen }),
+    });
+    return handleResponse<{ success: boolean; isStoreOpen: boolean }>(res, 'Failed to update store status');
+  },
 };

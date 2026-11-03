@@ -43,6 +43,13 @@ import { PriceAllocation } from './models/PriceAllocation.js';
 import { Schedule } from './models/Schedule.js';
 
 app.use(cors());
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.setHeader('X-Frame-Options', 'ALLOWALL');
+  next();
+});
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
 
@@ -896,6 +903,39 @@ function generateSlotsForDay(openTime = '08:00', closeTime = '20:00', slotDurati
   return slots;
 }
 
+// Master Store Status (Open vs Closed Toggle)
+app.get('/api/store-status', async (req, res) => {
+  try {
+    let scheduleDoc = await Schedule.findOne({ key: 'weekly_operational_schedule' });
+    const isStoreOpen = scheduleDoc && typeof scheduleDoc.isStoreOpen === 'boolean' ? scheduleDoc.isStoreOpen : true;
+    res.json({ isStoreOpen });
+  } catch (err) {
+    console.error('Store status fetch error:', err);
+    res.status(500).json({ error: 'Failed to fetch store status' });
+  }
+});
+
+app.patch('/api/store-status', optionalAuth, async (req, res) => {
+  try {
+    const { isStoreOpen } = req.body;
+    let scheduleDoc = await Schedule.findOne({ key: 'weekly_operational_schedule' });
+    if (!scheduleDoc) {
+      scheduleDoc = new Schedule({
+        key: 'weekly_operational_schedule',
+        days: DEFAULT_WEEKLY_SCHEDULE,
+        isStoreOpen: true,
+      });
+    }
+    scheduleDoc.isStoreOpen = Boolean(isStoreOpen);
+    await scheduleDoc.save();
+    console.log(`[Store Status Updated] Store is now: ${scheduleDoc.isStoreOpen ? 'OPEN' : 'CLOSED'}`);
+    res.json({ success: true, isStoreOpen: scheduleDoc.isStoreOpen });
+  } catch (err) {
+    console.error('Store status update error:', err);
+    res.status(500).json({ error: 'Failed to update store status' });
+  }
+});
+
 // Operational Schedule Endpoints (Get schedule & query slots for a date)
 app.get('/api/schedule', async (req, res) => {
   try {
@@ -948,7 +988,8 @@ app.get('/api/schedule', async (req, res) => {
       });
 
       return res.json({
-        isOpen: true,
+        isOpen: Boolean(scheduleDoc.isStoreOpen !== false && dayConfig.isOpen !== false),
+        isStoreOpen: scheduleDoc.isStoreOpen !== false,
         day: dayConfig.day,
         label: dayConfig.label,
         openTime,
@@ -963,6 +1004,7 @@ app.get('/api/schedule', async (req, res) => {
       days: scheduleDoc.days,
       slotDurationMinutes: durationMinutes,
       slotDurationHours: durationMinutes / 60,
+      isStoreOpen: scheduleDoc.isStoreOpen !== false,
     });
   } catch (err) {
     console.error('Schedule fetch error:', err);

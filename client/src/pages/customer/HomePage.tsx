@@ -14,14 +14,15 @@ import {
   Shirt,
   Calendar,
   CheckCircle2,
-  Tag
+  Tag,
+  AlertTriangle
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { HeroLaundryVisual } from '../../components/home/HeroLaundryVisual';
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const { services, loading } = useLaundry();
+  const { services, loading, isStoreOpen } = useLaundry();
 
   const [postalCode, setPostalCode] = useState('');
   const [postalStatus, setPostalStatus] = useState<'idle' | 'success'>('idle');
@@ -40,11 +41,50 @@ export const HomePage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Content */}
             <div className="lg:col-span-7 space-y-4 sm:space-y-6">
-              <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-orange-50 border border-orange-200 text-[10px] sm:text-xs font-bold text-orange-700 whitespace-nowrap">
-                <span className="w-2 h-2 rounded-full bg-orange-600 animate-pulse shrink-0"></span>
-                <span>Commercial Fabric Care & Steam Ironing</span>
+              {/* Live Store Closed Notice Banner (When admin toggles store to Closed) */}
+              {!isStoreOpen && (
+                <div className="p-3.5 sm:p-4 rounded-2xl bg-amber-500/10 border-2 border-amber-500/40 text-amber-950 flex items-start sm:items-center justify-between gap-3 animate-in fade-in slide-in-from-top-2">
+                  <div className="flex items-start sm:items-center gap-2.5 min-w-0">
+                    <div className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs mt-0.5 sm:mt-0">
+                      <AlertTriangle className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs sm:text-sm font-black text-amber-950 flex items-center gap-2 flex-wrap">
+                        <span>Facility Currently Closed</span>
+                        <span className="px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 text-[10px] uppercase font-black tracking-wider">
+                          Bookings Open
+                        </span>
+                      </div>
+                      <p className="text-[11px] sm:text-xs text-amber-800 font-medium mt-0.5">
+                        Operating hours are currently offline, but online bookings are open! Schedule your doorstep pickup anytime, and our fleet will collect during active hours.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Dynamic Status / Quality Badge */}
+              <div
+                className={`inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold whitespace-nowrap transition-colors border ${
+                  isStoreOpen
+                    ? 'bg-orange-50 border-orange-200 text-orange-700'
+                    : 'bg-amber-50 border-amber-300 text-amber-900'
+                }`}
+              >
+                <span
+                  className={`w-2 h-2 rounded-full shrink-0 ${
+                    isStoreOpen ? 'bg-orange-600 animate-pulse' : 'bg-amber-500'
+                  }`}
+                />
+                <span>
+                  {isStoreOpen
+                    ? 'Commercial Fabric Care & Steam Ironing'
+                    : 'Facility Currently Closed • Bookings Open'}
+                </span>
                 <span className="hidden sm:inline text-orange-300">•</span>
-                <span className="hidden sm:inline text-zinc-600 font-medium">Metro City Coverage</span>
+                <span className="hidden sm:inline text-zinc-600 font-medium">
+                  {isStoreOpen ? 'Metro City Coverage' : 'Reopening Soon'}
+                </span>
               </div>
 
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-zinc-950 leading-[1.12]">

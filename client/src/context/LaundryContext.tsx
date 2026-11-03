@@ -45,6 +45,10 @@ interface LaundryContextType {
   cartTax: number;
   cartGrandTotal: number;
   cartItemsCount: number;
+
+  // Master Store Status (Open / Closed)
+  isStoreOpen: boolean;
+  toggleStoreStatus: (targetState?: boolean) => Promise<boolean>;
 }
 
 const LaundryContext = createContext<LaundryContextType | undefined>(undefined);
@@ -56,6 +60,7 @@ export const LaundryProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [registeredItems, setRegisteredItems] = useState<RegisteredItem[]>([]);
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
+  const [isStoreOpen, setIsStoreOpen] = useState<boolean>(true);
   const [loading, setLoading] = useState(true);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [newOrderAlertCount, setNewOrderAlertCount] = useState(0);
@@ -162,17 +167,22 @@ export const LaundryProvider: React.FC<{ children: React.ReactNode }> = ({ child
     try {
       if (!isPolling) setLoading(true);
 
-      const [servicesRes, ordersRes, customersRes, driversRes, metricsRes, itemsRes] = await Promise.allSettled([
+      const [servicesRes, ordersRes, customersRes, driversRes, metricsRes, itemsRes, storeStatusRes] = await Promise.allSettled([
         api.getServices(),
         api.getOrders(),
         api.getCustomers(),
         api.getDrivers(),
         api.getMetrics(),
         api.getItems(),
+        api.getStoreStatus(),
       ]);
 
       if (servicesRes.status === 'fulfilled') {
         setServices(servicesRes.value);
+      }
+
+      if (storeStatusRes.status === 'fulfilled') {
+        setIsStoreOpen(Boolean(storeStatusRes.value?.isStoreOpen !== false));
       }
 
       if (itemsRes.status === 'fulfilled') {
@@ -342,6 +352,28 @@ export const LaundryProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   };
 
+  const toggleStoreStatus = useCallback(async (targetState?: boolean) => {
+    const nextState = typeof targetState === 'boolean' ? targetState : !isStoreOpen;
+    // Optimistic update
+    setIsStoreOpen(nextState);
+    try {
+      const res = await api.updateStoreStatus(nextState);
+      setIsStoreOpen(res.isStoreOpen);
+      showToast(
+        res.isStoreOpen
+          ? 'Store status: OPEN'
+          : 'Store status: CLOSED',
+        res.isStoreOpen ? 'success' : 'info'
+      );
+      return res.isStoreOpen;
+    } catch (err: any) {
+      // Revert on error
+      setIsStoreOpen(!nextState);
+      showToast(err.message || 'Failed to update store status', 'error');
+      throw err;
+    }
+  }, [isStoreOpen, showToast]);
+
   return (
     <LaundryContext.Provider
       value={{
@@ -378,6 +410,8 @@ export const LaundryProvider: React.FC<{ children: React.ReactNode }> = ({ child
         cartTax,
         cartGrandTotal,
         cartItemsCount,
+        isStoreOpen,
+        toggleStoreStatus,
       }}
     >
       {children}

@@ -232,33 +232,57 @@ export const AdminLayout: React.FC = () => {
         <Outlet />
       </main>
 
-      {/* MOBILE BOTTOM NAVIGATION BAR FOR ADMIN */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-zinc-950/95 backdrop-blur-md border-t border-zinc-800 shadow-xl px-1 py-1.5 flex items-center justify-around text-zinc-400">
+      {/* MOBILE BOTTOM NAVIGATION BAR FOR ADMIN (Enlarged Bar & Icons) */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-zinc-950/95 backdrop-blur-lg border-t border-zinc-800/90 shadow-[0_-4px_25px_rgba(0,0,0,0.4)] px-3 py-2 h-[72px] flex items-center justify-around text-zinc-400">
         <Link
           to="/admin"
-          className={`flex flex-col items-center gap-0.5 text-[10px] font-bold py-1 px-2.5 rounded-xl transition-all ${
+          className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 transition-all ${
             location.pathname === '/admin'
-              ? 'text-orange-500 font-black'
-              : 'hover:text-white'
+              ? 'text-orange-500'
+              : 'text-zinc-400 hover:text-zinc-200'
           }`}
         >
-          <LayoutDashboard className="w-4 h-4" />
-          <span>Home</span>
+          <div
+            className={`p-1.5 rounded-2xl transition-all ${
+              location.pathname === '/admin' ? 'bg-orange-500/15 text-orange-500 ring-1 ring-orange-500/30' : ''
+            }`}
+          >
+            <LayoutDashboard className={`w-6 h-6 ${location.pathname === '/admin' ? 'stroke-[2.5]' : 'stroke-2'}`} />
+          </div>
+          <span
+            className={`text-[11px] tracking-tight mt-0.5 leading-none ${
+              location.pathname === '/admin' ? 'font-black text-orange-500' : 'font-semibold text-zinc-400'
+            }`}
+          >
+            Home
+          </span>
         </Link>
 
         <Link
           to="/admin/bookings"
-          className={`flex flex-col items-center gap-0.5 text-[10px] font-bold py-1 px-2.5 rounded-xl transition-all relative ${
+          className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 transition-all relative ${
             location.pathname.startsWith('/admin/bookings') || location.pathname.startsWith('/admin/orders')
-              ? 'text-orange-500 font-black'
-              : 'hover:text-white'
+              ? 'text-orange-500'
+              : 'text-zinc-400 hover:text-zinc-200'
           }`}
         >
-          <div className="relative">
-            <ClipboardList className="w-5 h-5" />
+          <div
+            className={`p-1.5 rounded-2xl transition-all relative ${
+              location.pathname.startsWith('/admin/bookings') || location.pathname.startsWith('/admin/orders')
+                ? 'bg-orange-500/15 text-orange-500 ring-1 ring-orange-500/30'
+                : ''
+            }`}
+          >
+            <ClipboardList
+              className={`w-6 h-6 ${
+                location.pathname.startsWith('/admin/bookings') || location.pathname.startsWith('/admin/orders')
+                  ? 'stroke-[2.5]'
+                  : 'stroke-2'
+              }`}
+            />
             {bookingBadgeCount > 0 && (
               <span
-                className={`absolute -top-1.5 -right-2.5 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold font-mono flex items-center justify-center border-2 border-zinc-950 shadow-xs animate-in zoom-in-75 ${
+                className={`absolute -top-1 -right-2 min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-bold font-mono flex items-center justify-center border-2 border-zinc-950 shadow-xs animate-in zoom-in-75 ${
                   activeBookingsCount > 0
                     ? 'bg-orange-600 text-white'
                     : 'bg-zinc-700 text-zinc-200'
@@ -269,31 +293,71 @@ export const AdminLayout: React.FC = () => {
               </span>
             )}
           </div>
-          <span>Bookings</span>
+          <span
+            className={`text-[11px] tracking-tight mt-0.5 leading-none ${
+              location.pathname.startsWith('/admin/bookings') || location.pathname.startsWith('/admin/orders')
+                ? 'font-black text-orange-500'
+                : 'font-semibold text-zinc-400'
+            }`}
+          >
+            Bookings
+          </span>
         </Link>
 
         <Link
           to="/admin/services"
-          className={`flex flex-col items-center gap-0.5 text-[10px] font-bold py-1 px-2.5 rounded-xl transition-all ${
+          className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 transition-all ${
             location.pathname.startsWith('/admin/services')
-              ? 'text-orange-500 font-black'
-              : 'hover:text-white'
+              ? 'text-orange-500'
+              : 'text-zinc-400 hover:text-zinc-200'
           }`}
         >
-          <Tags className="w-4 h-4" />
-          <span>Services</span>
+          <div
+            className={`p-1.5 rounded-2xl transition-all ${
+              location.pathname.startsWith('/admin/services') ? 'bg-orange-500/15 text-orange-500 ring-1 ring-orange-500/30' : ''
+            }`}
+          >
+            <Tags
+              className={`w-6 h-6 ${
+                location.pathname.startsWith('/admin/services') ? 'stroke-[2.5]' : 'stroke-2'
+              }`}
+            />
+          </div>
+          <span
+            className={`text-[11px] tracking-tight mt-0.5 leading-none ${
+              location.pathname.startsWith('/admin/services') ? 'font-black text-orange-500' : 'font-semibold text-zinc-400'
+            }`}
+          >
+            Services
+          </span>
         </Link>
 
         <Link
           to="/admin/schedule"
-          className={`flex flex-col items-center gap-0.5 text-[10px] font-bold py-1 px-2.5 rounded-xl transition-all ${
+          className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 transition-all ${
             location.pathname.startsWith('/admin/schedule')
-              ? 'text-orange-500 font-black'
-              : 'hover:text-white'
+              ? 'text-orange-500'
+              : 'text-zinc-400 hover:text-zinc-200'
           }`}
         >
-          <Clock className="w-4 h-4" />
-          <span>Slot Timings</span>
+          <div
+            className={`p-1.5 rounded-2xl transition-all ${
+              location.pathname.startsWith('/admin/schedule') ? 'bg-orange-500/15 text-orange-500 ring-1 ring-orange-500/30' : ''
+            }`}
+          >
+            <Clock
+              className={`w-6 h-6 ${
+                location.pathname.startsWith('/admin/schedule') ? 'stroke-[2.5]' : 'stroke-2'
+              }`}
+            />
+          </div>
+          <span
+            className={`text-[11px] tracking-tight mt-0.5 leading-none ${
+              location.pathname.startsWith('/admin/schedule') ? 'font-black text-orange-500' : 'font-semibold text-zinc-400'
+            }`}
+          >
+            Slot Timings
+          </span>
         </Link>
       </nav>
     </div>

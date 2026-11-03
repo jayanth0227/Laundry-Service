@@ -7,6 +7,11 @@ export default defineConfig({
   server: {
     host: '0.0.0.0', // Exposes the dev server across all network interfaces (Wi-Fi/LAN)
     port: 5173,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+      'Access-Control-Allow-Headers': '*',
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:5000',

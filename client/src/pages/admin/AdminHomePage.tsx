@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -23,7 +23,19 @@ import { formatCurrency } from '../../utils/currency';
 
 export const AdminHomePage: React.FC = () => {
   const navigate = useNavigate();
-  const { orders, services, metrics, loading, refreshData, newOrderAlertCount } = useLaundry();
+  const { orders, services, metrics, loading, refreshData, newOrderAlertCount, isStoreOpen, toggleStoreStatus } = useLaundry();
+  const [togglingStore, setTogglingStore] = useState(false);
+
+  const handleToggleStore = async () => {
+    try {
+      setTogglingStore(true);
+      await toggleStoreStatus();
+    } catch {
+      // toast handled in context
+    } finally {
+      setTogglingStore(false);
+    }
+  };
 
   // Metrics calculations
   const totalRevenue = orders.reduce(
@@ -51,23 +63,62 @@ export const AdminHomePage: React.FC = () => {
   return (
     <div className="space-y-4 sm:space-y-6 max-w-5xl mx-auto pb-24 md:pb-8 px-2 sm:px-0">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-200">
-        <div>
-          <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-3 pb-3 border-b border-zinc-200">
+        {/* Top Header Row: Title on Left, Toggle Button on Far Right Edge */}
+        <div className="flex items-center justify-between gap-3 w-full">
+          <div className="min-w-0">
             <h1 className="text-xl sm:text-2xl font-black text-zinc-950 tracking-tight">
               Operations Hub
             </h1>
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Live Online
-            </span>
+            <p className="text-xs text-zinc-500 font-medium mt-0.5 line-clamp-1 sm:line-clamp-none">
+              Welcome to AquaClean management. Overview of live orders, revenue, and store capacity.
+            </p>
           </div>
-          <p className="text-xs text-zinc-500 font-medium mt-0.5">
-            Welcome to AquaClean management. Overview of live orders, revenue, and store capacity.
-          </p>
+
+          {/* Master Store Status Interactive Toggle - Anchored to Far Right Edge */}
+          <div className="shrink-0 ml-auto">
+            <button
+              type="button"
+              onClick={handleToggleStore}
+              disabled={togglingStore}
+              className={`group relative inline-flex items-center gap-2 pl-2.5 pr-2 py-1 rounded-full text-xs font-bold transition-all border shadow-2xs cursor-pointer select-none ${
+                isStoreOpen
+                  ? 'bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-emerald-300'
+                  : 'bg-red-50 hover:bg-red-100 text-red-800 border-red-300'
+              } ${togglingStore ? 'opacity-70 cursor-wait' : 'active:scale-95'}`}
+              title={isStoreOpen ? 'Click to toggle Closed' : 'Click to toggle Open'}
+            >
+              {/* Animated Status Pulse Dot */}
+              <span className="flex h-2 w-2 relative shrink-0">
+                {isStoreOpen && (
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                )}
+                <span
+                  className={`relative inline-flex rounded-full h-2 w-2 ${
+                    isStoreOpen ? 'bg-emerald-600' : 'bg-red-500'
+                  }`}
+                />
+              </span>
+
+              {/* Status Text Label */}
+              <span className="font-black text-[11px] uppercase tracking-wider">
+                {isStoreOpen ? 'Open' : 'Closed'}
+              </span>
+
+              {/* iOS-Style Toggle Switch Slider */}
+              <div
+                className={`w-7 h-4 rounded-full p-0.5 transition-colors duration-200 ease-in-out shrink-0 flex items-center ${
+                  isStoreOpen ? 'bg-emerald-600 justify-end' : 'bg-red-400 justify-start'
+                }`}
+              >
+                <div className="w-3 h-3 rounded-full bg-white shadow-xs" />
+              </div>
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
+        {/* Actions Row */}
+        <div className="flex items-center justify-between sm:justify-end gap-2 w-full">
           <button
             type="button"
             onClick={() => refreshData()}
@@ -92,86 +143,94 @@ export const AdminHomePage: React.FC = () => {
       {/* Primary KPI Cards (4 columns) */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
         {/* Total Revenue */}
-        <div className="bg-white border-2 border-zinc-200/90 rounded-2xl p-3.5 sm:p-4 shadow-xs space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider">
+        <div className="bg-white border-2 border-zinc-200/90 rounded-2xl p-3 sm:p-4 shadow-xs flex flex-col justify-between h-full">
+          <div className="flex items-center justify-between gap-1.5 mb-1.5 sm:mb-2">
+            <span className="text-[10px] sm:text-xs font-bold text-zinc-500 uppercase tracking-normal whitespace-nowrap truncate">
               Total Revenue
             </span>
-            <div className="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
-              <TrendingUp className="w-4 h-4" />
+            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg sm:rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
+              <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="text-xl sm:text-2xl font-black font-mono text-zinc-950">
-            {formatCurrency(totalRevenue)}
+          <div className="my-auto py-1">
+            <div className="text-xl sm:text-2xl font-black font-mono text-zinc-950 leading-none">
+              {formatCurrency(totalRevenue)}
+            </div>
           </div>
-          <div className="text-[11px] text-zinc-500 font-medium">
-            Across {orders.length} lifetime orders
+          <div className="text-[10.5px] sm:text-[11px] text-zinc-500 font-medium mt-auto flex items-center whitespace-nowrap leading-tight">
+            <span>{orders.length} lifetime {orders.length === 1 ? 'order' : 'orders'}</span>
           </div>
         </div>
 
         {/* Pending Pickups */}
         <Link
           to="/admin/bookings?status=new"
-          className="bg-white border-2 border-zinc-200/90 rounded-2xl p-3.5 sm:p-4 shadow-xs space-y-2 hover:border-orange-400 transition-all group block cursor-pointer"
+          className="bg-white border-2 border-zinc-200/90 rounded-2xl p-3 sm:p-4 shadow-xs hover:border-orange-400 transition-all group flex flex-col justify-between h-full cursor-pointer"
         >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider group-hover:text-orange-600 transition-colors">
+          <div className="flex items-center justify-between gap-1.5 mb-1.5 sm:mb-2">
+            <span className="text-[10px] sm:text-xs font-bold text-zinc-500 uppercase tracking-normal whitespace-nowrap truncate group-hover:text-orange-600 transition-colors">
               Pending Pickup
             </span>
-            <div className="w-7 h-7 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center border border-orange-100">
-              <Clock className="w-4 h-4" />
+            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg sm:rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center shrink-0 border border-orange-100">
+              <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="text-xl sm:text-2xl font-black font-mono text-zinc-950">
-            {pendingBookings.length}
+          <div className="my-auto py-1">
+            <div className="text-xl sm:text-2xl font-black font-mono text-zinc-950 leading-none">
+              {pendingBookings.length}
+            </div>
           </div>
-          <div className="text-[11px] text-orange-600 font-bold flex items-center gap-0.5">
+          <div className="text-[10.5px] sm:text-[11px] text-orange-600 font-bold flex items-center gap-0.5 mt-auto whitespace-nowrap leading-tight">
             <span>Awaiting collection</span>
-            <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+            <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform shrink-0" />
           </div>
         </Link>
 
         {/* In Wash & Treatment */}
         <Link
           to="/admin/bookings?status=in_progress"
-          className="bg-white border-2 border-zinc-200/90 rounded-2xl p-3.5 sm:p-4 shadow-xs space-y-2 hover:border-blue-400 transition-all group block cursor-pointer"
+          className="bg-white border-2 border-zinc-200/90 rounded-2xl p-3 sm:p-4 shadow-xs hover:border-blue-400 transition-all group flex flex-col justify-between h-full cursor-pointer"
         >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider group-hover:text-blue-600 transition-colors">
+          <div className="flex items-center justify-between gap-1.5 mb-1.5 sm:mb-2">
+            <span className="text-[10px] sm:text-xs font-bold text-zinc-500 uppercase tracking-normal whitespace-nowrap truncate group-hover:text-blue-600 transition-colors">
               In Wash & Iron
             </span>
-            <div className="w-7 h-7 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
-              <Droplets className="w-4 h-4" />
+            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg sm:rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100">
+              <Droplets className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="text-xl sm:text-2xl font-black font-mono text-zinc-950">
-            {inProgressBookings.length}
+          <div className="my-auto py-1">
+            <div className="text-xl sm:text-2xl font-black font-mono text-zinc-950 leading-none">
+              {inProgressBookings.length}
+            </div>
           </div>
-          <div className="text-[11px] text-blue-600 font-bold flex items-center gap-0.5">
+          <div className="text-[10.5px] sm:text-[11px] text-blue-600 font-bold flex items-center gap-0.5 mt-auto whitespace-nowrap leading-tight">
             <span>In facility plant</span>
-            <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+            <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform shrink-0" />
           </div>
         </Link>
 
         {/* Delivered / Completed */}
         <Link
           to="/admin/bookings?status=delivered"
-          className="bg-white border-2 border-zinc-200/90 rounded-2xl p-3.5 sm:p-4 shadow-xs space-y-2 hover:border-emerald-400 transition-all group block cursor-pointer"
+          className="bg-white border-2 border-zinc-200/90 rounded-2xl p-3 sm:p-4 shadow-xs hover:border-emerald-400 transition-all group flex flex-col justify-between h-full cursor-pointer"
         >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-zinc-500 uppercase tracking-wider group-hover:text-emerald-600 transition-colors">
+          <div className="flex items-center justify-between gap-1.5 mb-1.5 sm:mb-2">
+            <span className="text-[10px] sm:text-xs font-bold text-zinc-500 uppercase tracking-normal whitespace-nowrap truncate group-hover:text-emerald-600 transition-colors">
               Completed
             </span>
-            <div className="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
-              <PackageCheck className="w-4 h-4" />
+            <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg sm:rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
+              <PackageCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="text-xl sm:text-2xl font-black font-mono text-zinc-950">
-            {completedBookings.length}
+          <div className="my-auto py-1">
+            <div className="text-xl sm:text-2xl font-black font-mono text-zinc-950 leading-none">
+              {completedBookings.length}
+            </div>
           </div>
-          <div className="text-[11px] text-emerald-600 font-bold flex items-center gap-0.5">
+          <div className="text-[10.5px] sm:text-[11px] text-emerald-600 font-bold flex items-center gap-0.5 mt-auto whitespace-nowrap leading-tight">
             <span>Delivered safely</span>
-            <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+            <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform shrink-0" />
           </div>
         </Link>
       </div>
@@ -246,22 +305,22 @@ export const AdminHomePage: React.FC = () => {
 
       {/* Recent Bookings Activity Feed */}
       <div className="bg-white border-2 border-zinc-200/90 rounded-2xl p-4 sm:p-5 shadow-xs space-y-3.5">
-        <div className="flex items-center justify-between gap-2 border-b border-zinc-100 pb-3">
-          <div>
-            <h2 className="font-black text-sm sm:text-base text-zinc-950">
+        <div className="flex items-center justify-between gap-3 border-b border-zinc-100 pb-3">
+          <div className="min-w-0 flex-1">
+            <h2 className="font-black text-sm sm:text-base text-zinc-950 truncate">
               Recent Customer Bookings
             </h2>
-            <p className="text-xs text-zinc-500 mt-0.5">
+            <p className="text-xs text-zinc-500 mt-0.5 line-clamp-1 sm:line-clamp-none">
               Latest incoming orders placed through the platform.
             </p>
           </div>
 
           <Link
             to="/admin/bookings"
-            className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1 hover:underline"
+            className="shrink-0 whitespace-nowrap text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1 hover:underline py-1 px-1.5 rounded-lg hover:bg-orange-50 transition-colors"
           >
             <span>View All ({orders.length})</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <ArrowRight className="w-3.5 h-3.5 shrink-0" />
           </Link>
         </div>
 

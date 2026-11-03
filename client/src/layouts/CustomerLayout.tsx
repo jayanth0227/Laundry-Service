@@ -24,7 +24,7 @@ export const CustomerLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
-  const { cartItemsCount } = useLaundry();
+  const { cartItemsCount, isStoreOpen } = useLaundry();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -53,6 +53,17 @@ export const CustomerLayout: React.FC = () => {
               Daily Doorstep Pickup: 8:00 AM – 8:00 PM
             </span>
             <span className="hidden md:inline text-zinc-700">|</span>
+            <span
+              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
+                isStoreOpen
+                  ? 'bg-emerald-950/80 text-emerald-300 border-emerald-700/60'
+                  : 'bg-red-950/80 text-red-300 border-red-700/60'
+              }`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${isStoreOpen ? 'bg-emerald-400 animate-pulse' : 'bg-red-400'}`} />
+              <span>{isStoreOpen ? 'Open for Bookings' : 'Store Closed'}</span>
+            </span>
+            <span className="hidden md:inline text-zinc-700">|</span>
             <span className="hidden md:flex items-center gap-1 text-zinc-400">
               <MapPin className="w-3.5 h-3.5 text-orange-500" />
               Serving Metro City & Surrounding Areas
@@ -71,7 +82,7 @@ export const CustomerLayout: React.FC = () => {
 
       {/* Main Navigation Bar */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-zinc-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Brand Mark */}
           <Link to="/" className="flex items-center gap-2.5 group">
             <div className="w-9 h-9 rounded-xl bg-orange-600 flex items-center justify-center text-white font-black shadow-md shadow-orange-600/30 group-hover:bg-orange-700 transition-colors">
@@ -238,13 +249,21 @@ export const CustomerLayout: React.FC = () => {
         </div>
       </header>
 
+      {/* Global Live Closed Announcement Banner */}
+      {!isStoreOpen && (
+        <div className="bg-amber-600 text-white text-xs font-bold py-2 px-4 text-center flex items-center justify-center gap-2 shadow-xs animate-in fade-in slide-in-from-top-1">
+          <span className="w-2 h-2 rounded-full bg-white animate-pulse shrink-0" />
+          <span>AquaClean facility is currently closed, but online bookings are open! Schedule your pickup anytime.</span>
+        </div>
+      )}
+
       {/* Main Body with bottom padding on mobile for bottom nav */}
-      <main className="flex-1 pb-20 md:pb-0">
+      <main className="flex-1 pb-24 md:pb-0">
         <Outlet />
       </main>
 
-      {/* MOBILE BOTTOM NAVIGATION BAR FOR CUSTOMER */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-white/95 backdrop-blur-lg border-t border-zinc-200/90 shadow-[0_-4px_25px_rgba(0,0,0,0.06)] px-2 py-1.5 flex items-center justify-around">
+      {/* MOBILE BOTTOM NAVIGATION BAR FOR CUSTOMER (Comfortable Height & Prominent Icons) */}
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-white/95 backdrop-blur-lg border-t border-zinc-200/90 shadow-[0_-4px_25px_rgba(0,0,0,0.08)] px-3 py-2.5 h-[68px] flex items-center justify-around">
         {[
           { to: '/', label: 'Home', icon: Home, matchExact: true },
           { to: '/prices', label: 'Prices', icon: Tag, matchExact: false },
@@ -258,14 +277,14 @@ export const CustomerLayout: React.FC = () => {
             <Link
               key={item.to}
               to={item.to}
-              className={`flex flex-col items-center justify-center flex-1 py-1 transition-all ${
+              className={`flex flex-col items-center justify-center flex-1 h-full py-0.5 transition-all ${
                 isActive ? 'text-orange-600' : 'text-zinc-400 hover:text-zinc-600'
               }`}
             >
-              <div className={`p-1 rounded-xl transition-all ${isActive ? 'bg-orange-50 text-orange-600' : ''}`}>
-                <item.icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : 'stroke-2'}`} />
+              <div className={`p-1.5 rounded-2xl transition-all ${isActive ? 'bg-orange-50 text-orange-600' : ''}`}>
+                <item.icon className={`w-6 h-6 ${isActive ? 'stroke-[2.5]' : 'stroke-2'}`} />
               </div>
-              <span className={`text-[10px] tracking-tight mt-0.5 leading-none ${isActive ? 'font-black text-orange-600' : 'font-semibold text-zinc-500'}`}>
+              <span className={`text-[11px] tracking-tight mt-0.5 leading-none ${isActive ? 'font-black text-orange-600' : 'font-semibold text-zinc-500'}`}>
                 {item.label}
               </span>
             </Link>

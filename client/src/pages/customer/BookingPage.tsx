@@ -31,7 +31,7 @@ import type { AvailableSlot } from '../../types';
 export const BookingPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { services, loading: servicesLoading, createOrder, registeredItems } = useLaundry();
+  const { services, loading: servicesLoading, createOrder, registeredItems, isStoreOpen } = useLaundry();
   const { user } = useAuth();
 
   // Selected Service
@@ -496,6 +496,26 @@ export const BookingPage: React.FC = () => {
           </p>
         </div>
       </div>
+
+      {/* Live Store Closed Informational Notice (Orders still enabled) */}
+      {!isStoreOpen && (
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-amber-500/10 border-2 border-amber-500/30 text-amber-950 flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+          <div className="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+            <AlertCircle className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="text-xs sm:text-sm font-black flex items-center gap-2">
+              <span>Facility is Currently Closed</span>
+              <span className="px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 text-[10px] uppercase font-black tracking-wider">
+                Bookings Open
+              </span>
+            </div>
+            <p className="text-[11px] sm:text-xs text-amber-800 font-medium mt-0.5">
+              Operating hours are currently closed, but you can book your pickup anytime! Your doorstep collection will be processed during the next active cycle.
+            </p>
+          </div>
+        </div>
+      )}
 
       {errorMessage && (
         <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-800 flex items-start gap-2.5">
@@ -1115,7 +1135,7 @@ export const BookingPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Submit Confirmation Button */}
+            {/* Submit Confirmation Button (Always Enabled for Valid Orders) */}
             <button
               type="submit"
               disabled={isSubmitting || totalItemCount === 0}

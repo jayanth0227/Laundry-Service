@@ -14,6 +14,7 @@ const ScheduleSchema = new mongoose.Schema(
     days: [DayScheduleSchema],
     slotDurationMinutes: { type: Number, default: 30 }, // Configurable: 30 mins, 45 mins, 60 mins, etc.
     slotDurationHours: { type: Number, default: 0.5 },
+    isStoreOpen: { type: Boolean, default: true }, // Master toggle for Open vs Closed
   },
   { timestamps: true }
 );

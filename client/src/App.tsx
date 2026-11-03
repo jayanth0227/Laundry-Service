@@ -127,6 +127,10 @@ export function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<LoginPage />} />
 
+            {/* Direct Top-Level Route Aliases */}
+            <Route path="/bookings" element={<Navigate to="/admin/bookings" replace />} />
+            <Route path="/schedule" element={<Navigate to="/admin/schedule" replace />} />
+
             {/* Admin Operations Portal (Strictly Admin-Only) */}
             <Route
               path="/admin"

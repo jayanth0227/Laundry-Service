@@ -171,31 +171,32 @@ export const ScheduleManagementPage: React.FC = () => {
   }, [previewDayConfig, slotDurationMinutes]);
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-200 pb-4">
-        <div>
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-orange-600 mb-1">
-            <Clock className="w-3.5 h-3.5" />
+    <div className="space-y-4 sm:space-y-6 max-w-6xl mx-auto pb-24 md:pb-8 px-2 sm:px-0">
+      {/* Header Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-200 pb-3 sm:pb-4">
+        <div className="min-w-0">
+          <div className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-orange-600 mb-0.5 whitespace-nowrap">
+            <Clock className="w-3.5 h-3.5 shrink-0" />
             <span>Operational Schedule & Timing Control</span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-black text-zinc-950 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-black text-zinc-950 tracking-tight whitespace-nowrap truncate">
             Weekly Slot Timings & Availability
           </h1>
-          <p className="text-xs text-zinc-500 mt-1 max-w-2xl">
-            Configure working hours and customizable slot intervals (e.g. 30 mins, 45 mins, 60 mins). Customer booking slots dynamically adapt in real-time between your opening and closing timings.
+          <p className="text-xs text-zinc-500 mt-0.5 max-w-2xl line-clamp-1 sm:line-clamp-none">
+            Configure working hours and customizable slot intervals. Customer booking slots adapt in real-time.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
           <Button
             variant="outline"
             size="sm"
             type="button"
             onClick={fetchSchedule}
             disabled={loading}
+            className="whitespace-nowrap text-xs font-bold px-3 py-2 cursor-pointer"
           >
-            <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 mr-1.5 shrink-0 ${loading ? 'animate-spin' : ''}`} />
             <span>Reload</span>
           </Button>
 
@@ -205,9 +206,9 @@ export const ScheduleManagementPage: React.FC = () => {
             type="button"
             onClick={handleSave}
             isLoading={saving}
-            className="btn-orange text-xs"
+            className="btn-orange text-xs font-bold whitespace-nowrap px-4 py-2 cursor-pointer"
           >
-            <Save className="w-4 h-4 mr-1.5" />
+            <Save className="w-3.5 h-3.5 mr-1.5 shrink-0" />
             <span>Save All Timings</span>
           </Button>
         </div>
@@ -215,67 +216,72 @@ export const ScheduleManagementPage: React.FC = () => {
 
       {/* Notifications */}
       {successMsg && (
-        <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center gap-2.5 animate-in fade-in">
+        <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center gap-2 animate-in fade-in">
           <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span className="font-medium">{successMsg}</span>
+          <span className="font-bold leading-tight">{successMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl text-xs text-red-800 flex items-center gap-2.5">
+        <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-800 flex items-center gap-2">
           <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
-          <span className="font-medium">{errorMsg}</span>
+          <span className="font-bold leading-tight">{errorMsg}</span>
         </div>
       )}
 
-      {/* CONFIGURABLE SLOT DURATION SELECTOR */}
-      <div className="bg-white border border-zinc-200 rounded-2xl p-4 sm:p-5 shadow-xs space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 pb-3">
-          <div>
-            <h2 className="text-sm font-black text-zinc-950 flex items-center gap-2">
-              <Clock className="w-4 h-4 text-orange-600" />
-              <span>Configurable Slot Time Duration</span>
+      {/* CONFIGURABLE SLOT DURATION SELECTOR (Space-Efficient & Single-Line Grid) */}
+      <div className="bg-white border-2 border-zinc-200/90 rounded-2xl p-3.5 sm:p-5 shadow-xs space-y-3">
+        <div className="flex items-center justify-between gap-2 border-b border-zinc-100 pb-2.5">
+          <div className="min-w-0">
+            <h2 className="text-sm font-black text-zinc-950 flex items-center gap-2 whitespace-nowrap truncate">
+              <Clock className="w-4 h-4 text-orange-600 shrink-0" />
+              <span>Slot Time Duration</span>
             </h2>
-            <p className="text-[11px] text-zinc-500">
-              Admin can set slot duration to 30 mins, 45 mins, 1 hour, or any custom interval. Slots are generated according to this timing.
+            <p className="text-[11px] text-zinc-500 line-clamp-1">
+              Slots are generated across your opening and closing hours according to this interval.
             </p>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-[11px] font-bold text-zinc-500">Selected Interval:</span>
-            <span className="px-3 py-1 rounded-xl bg-orange-600 text-white font-black text-xs shadow-xs">
-              {slotDurationMinutes} Minutes
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="hidden sm:inline text-[11px] font-bold text-zinc-400 whitespace-nowrap">Active:</span>
+            <span className="px-2.5 py-0.5 rounded-full bg-orange-600 text-white font-black text-xs shadow-2xs whitespace-nowrap">
+              {slotDurationMinutes} Mins
             </span>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 pt-1">
-          {[15, 30, 45, 60, 90, 120].map((mins) => (
-            <button
-              key={mins}
-              type="button"
-              onClick={() => setSlotDurationMinutes(mins)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                slotDurationMinutes === mins
-                  ? 'bg-orange-600 text-white shadow-md shadow-orange-600/25 border border-orange-600'
-                  : 'bg-zinc-50 hover:bg-zinc-100 text-zinc-700 border border-zinc-200'
-              }`}
-            >
-              {slotDurationMinutes === mins && <Check className="w-3.5 h-3.5" />}
-              <span>
-                {mins < 60
-                  ? `${mins} Mins`
-                  : mins === 60
-                  ? '1 Hour (60 Mins)'
-                  : mins === 90
-                  ? '1.5 Hours (90 Mins)'
-                  : `${mins / 60} Hours (${mins} Mins)`}
-              </span>
-            </button>
-          ))}
+        {/* Preset Interval Buttons in a Structured 3-Col / 6-Col Single-Line Grid */}
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-1.5 pt-0.5">
+          {[
+            { mins: 15, label: '15 Mins' },
+            { mins: 30, label: '30 Mins' },
+            { mins: 45, label: '45 Mins' },
+            { mins: 60, label: '1 Hour' },
+            { mins: 90, label: '1.5 Hours' },
+            { mins: 120, label: '2 Hours' },
+          ].map(({ mins, label }) => {
+            const isSelected = slotDurationMinutes === mins;
+            return (
+              <button
+                key={mins}
+                type="button"
+                onClick={() => setSlotDurationMinutes(mins)}
+                className={`py-2 px-1 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1 whitespace-nowrap cursor-pointer select-none ${
+                  isSelected
+                    ? 'bg-orange-600 text-white shadow-xs border border-orange-600 font-black'
+                    : 'bg-zinc-50 hover:bg-zinc-100 text-zinc-700 border border-zinc-200'
+                }`}
+              >
+                {isSelected && <Check className="w-3 h-3 shrink-0" />}
+                <span className="truncate">{label}</span>
+              </button>
+            );
+          })}
+        </div>
 
-          {/* Custom Duration Input */}
-          <div className="flex items-center gap-1.5 pl-2 sm:border-l sm:border-zinc-200">
-            <span className="text-xs text-zinc-500 font-bold">Custom:</span>
+        {/* Custom Duration Inline Row */}
+        <div className="flex items-center justify-between sm:justify-start gap-2 pt-2 border-t border-zinc-100/80 text-xs text-zinc-600">
+          <span className="font-bold text-[11px] text-zinc-500 whitespace-nowrap">Or custom interval:</span>
+          <div className="flex items-center gap-1.5">
             <input
               type="number"
               min="10"
@@ -283,49 +289,53 @@ export const ScheduleManagementPage: React.FC = () => {
               step="5"
               value={slotDurationMinutes}
               onChange={(e) => setSlotDurationMinutes(Math.max(5, Number(e.target.value)))}
-              className="w-16 px-2.5 py-1.5 rounded-xl border border-zinc-300 text-xs font-mono font-bold text-zinc-900 text-center focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white"
+              className="w-16 px-2.5 py-1 rounded-xl border border-zinc-300 text-xs font-mono font-bold text-zinc-900 text-center focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white"
             />
-            <span className="text-xs text-zinc-500 font-bold">mins</span>
+            <span className="font-bold text-[11px] text-zinc-500 whitespace-nowrap">Minutes</span>
           </div>
         </div>
       </div>
 
-      {/* Quick Action Presets */}
-      <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-2 font-bold text-zinc-700">
-          <Sliders className="w-4 h-4 text-orange-600" />
-          <span>Quick Schedule Presets:</span>
+      {/* Quick Action Presets (Single-Line Buttons) */}
+      <div className="bg-white border-2 border-zinc-200/90 rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 text-xs shadow-xs">
+        <div className="flex items-center gap-2 font-bold text-zinc-700 whitespace-nowrap">
+          <Sliders className="w-4 h-4 text-orange-600 shrink-0" />
+          <span>Quick Presets:</span>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full sm:w-auto">
           <button
             type="button"
             onClick={handleStandardWeekdays}
-            className="px-3 py-1.5 bg-white border border-zinc-300 hover:border-orange-500 rounded-xl font-bold text-zinc-700 hover:text-orange-600 transition-colors shadow-xs"
+            className="px-3.5 py-2 bg-zinc-50 hover:bg-orange-50 hover:text-orange-600 border border-zinc-200 hover:border-orange-300 rounded-xl font-bold text-zinc-700 transition-colors shadow-2xs whitespace-nowrap text-center cursor-pointer"
           >
-            Standard Hours (Mon-Sat Open, Sun Closed)
+            Standard Hours (Mon–Sat)
           </button>
           <button
             type="button"
             onClick={handleApplyMondayToAll}
-            className="px-3 py-1.5 bg-white border border-zinc-300 hover:border-orange-500 rounded-xl font-bold text-zinc-700 hover:text-orange-600 transition-colors shadow-xs"
+            className="px-3.5 py-2 bg-zinc-50 hover:bg-orange-50 hover:text-orange-600 border border-zinc-200 hover:border-orange-300 rounded-xl font-bold text-zinc-700 transition-colors shadow-2xs whitespace-nowrap text-center cursor-pointer"
           >
-            Copy Monday Timings to All Days
+            Apply Monday to All Days
           </button>
         </div>
       </div>
 
       {/* Main Days Grid & Live Preview Panel */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Left Column (2/3): Days Configuration Table */}
         <div className="lg:col-span-2 space-y-3">
-          <div className="bg-white border border-zinc-200 rounded-2xl shadow-xs overflow-hidden">
-            <div className="p-4 border-b border-zinc-100 flex items-center justify-between">
-              <div>
-                <h2 className="text-sm font-black text-zinc-950">Daily Operational Hours</h2>
-                <p className="text-[11px] text-zinc-500">Enable or disable days and set pickup operational window</p>
+          <div className="bg-white border-2 border-zinc-200/90 rounded-2xl shadow-xs overflow-hidden">
+            <div className="p-3.5 sm:p-4 border-b border-zinc-100 flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <h2 className="text-sm font-black text-zinc-950 whitespace-nowrap truncate">
+                  Daily Operational Hours
+                </h2>
+                <p className="text-[11px] text-zinc-500 line-clamp-1">
+                  Enable or disable days and set pickup operational window
+                </p>
               </div>
-              <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-orange-100 text-orange-800 border border-orange-200">
-                {slotDurationMinutes}-Min Slot Intervals
+              <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-orange-100 text-orange-800 border border-orange-200 whitespace-nowrap shrink-0">
+                {slotDurationMinutes}-Min Intervals
               </span>
             </div>
 
@@ -337,56 +347,59 @@ export const ScheduleManagementPage: React.FC = () => {
                   <div
                     key={dayItem.day}
                     onClick={() => setActivePreviewDay(dayItem.day)}
-                    className={`p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 cursor-pointer transition-colors ${
-                      isSelectedForPreview ? 'bg-orange-50/40' : 'hover:bg-zinc-50'
+                    className={`p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 cursor-pointer transition-colors ${
+                      isSelectedForPreview ? 'bg-orange-50/50' : 'hover:bg-zinc-50'
                     }`}
                   >
                     {/* Day Name & Toggle */}
-                    <div className="flex items-center gap-3 min-w-[140px]">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggleDay(dayItem.day);
-                        }}
-                        className={`w-9 h-6 rounded-full transition-colors relative p-0.5 shrink-0 ${
-                          dayItem.isOpen ? 'bg-emerald-600' : 'bg-zinc-300'
-                        }`}
-                        title={dayItem.isOpen ? 'Open (Click to close)' : 'Closed (Click to open)'}
-                      >
-                        <span
-                          className={`w-5 h-5 rounded-full bg-white shadow-xs block transition-transform ${
-                            dayItem.isOpen ? 'translate-x-3' : 'translate-x-0'
+                    <div className="flex items-center justify-between sm:justify-start gap-3 min-w-0 sm:min-w-[150px]">
+                      <div className="flex items-center gap-2.5">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggleDay(dayItem.day);
+                          }}
+                          className={`w-9 h-5 rounded-full transition-colors relative p-0.5 shrink-0 ${
+                            dayItem.isOpen ? 'bg-emerald-600' : 'bg-zinc-300'
                           }`}
-                        />
-                      </button>
-
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-black text-xs text-zinc-950">{dayItem.label}</span>
-                          {isSelectedForPreview && (
-                            <span className="text-[9px] font-black uppercase text-orange-600">Previewing</span>
-                          )}
-                        </div>
-                        <span
-                          className={`text-[10px] font-bold ${
-                            dayItem.isOpen ? 'text-emerald-700' : 'text-zinc-400'
-                          }`}
+                          title={dayItem.isOpen ? 'Open (Click to close)' : 'Closed (Click to open)'}
                         >
-                          {dayItem.isOpen ? '● Open for Bookings' : '○ Closed'}
-                        </span>
+                          <span
+                            className={`w-4 h-4 rounded-full bg-white shadow-xs block transition-transform ${
+                              dayItem.isOpen ? 'translate-x-4' : 'translate-x-0'
+                            }`}
+                          />
+                        </button>
+
+                        <div className="flex items-center gap-2 whitespace-nowrap">
+                          <span className="font-black text-xs text-zinc-950">{dayItem.label}</span>
+                          <span
+                            className={`text-[10px] font-bold ${
+                              dayItem.isOpen ? 'text-emerald-700' : 'text-zinc-400'
+                            }`}
+                          >
+                            {dayItem.isOpen ? '● Open' : '○ Closed'}
+                          </span>
+                        </div>
                       </div>
+
+                      {isSelectedForPreview && (
+                        <span className="sm:hidden text-[9px] font-black uppercase tracking-wider text-orange-600 bg-orange-100/80 px-2 py-0.5 rounded-full whitespace-nowrap">
+                          Previewing
+                        </span>
+                      )}
                     </div>
 
-                    {/* Hours Selection */}
+                    {/* Hours Selection in Single-Line Row */}
                     {dayItem.isOpen ? (
                       <div
-                        className="flex items-center gap-2 sm:gap-3 flex-wrap"
+                        className="flex items-center gap-2 w-full sm:w-auto"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] font-bold text-zinc-400 uppercase">From</span>
-                          <div className="w-28">
+                        <div className="flex items-center gap-1.5 flex-1 sm:flex-initial">
+                          <span className="text-[10px] font-bold text-zinc-400 uppercase whitespace-nowrap shrink-0">From</span>
+                          <div className="w-full sm:w-28">
                             <CustomSelect
                               value={dayItem.openTime}
                               onChange={(val) => handleTimeChange(dayItem.day, 'openTime', String(val))}
@@ -396,9 +409,9 @@ export const ScheduleManagementPage: React.FC = () => {
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] font-bold text-zinc-400 uppercase">To</span>
-                          <div className="w-28">
+                        <div className="flex items-center gap-1.5 flex-1 sm:flex-initial">
+                          <span className="text-[10px] font-bold text-zinc-400 uppercase whitespace-nowrap shrink-0">To</span>
+                          <div className="w-full sm:w-28">
                             <CustomSelect
                               value={dayItem.closeTime}
                               onChange={(val) => handleTimeChange(dayItem.day, 'closeTime', String(val))}
@@ -409,8 +422,8 @@ export const ScheduleManagementPage: React.FC = () => {
                         </div>
                       </div>
                     ) : (
-                      <div className="text-xs text-zinc-400 italic font-medium py-1">
-                        No customer pickup slots generated
+                      <div className="text-[11px] text-zinc-400 font-medium whitespace-nowrap py-0.5">
+                        Closed (No customer pickup slots)
                       </div>
                     )}
                   </div>
@@ -422,43 +435,43 @@ export const ScheduleManagementPage: React.FC = () => {
 
         {/* Right Column (1/3): Live Customer Slot Preview */}
         <div className="space-y-4">
-          <div className="bg-white border border-zinc-200 rounded-2xl p-4 shadow-xs space-y-4">
-            <div className="border-b border-zinc-100 pb-3">
+          <div className="bg-white border-2 border-zinc-200/90 rounded-2xl p-3.5 sm:p-4 shadow-xs space-y-3.5">
+            <div className="border-b border-zinc-100 pb-2.5">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wider text-orange-600">
+                <span className="text-[10px] font-black uppercase tracking-wider text-orange-600 whitespace-nowrap">
                   Live Customer Preview
                 </span>
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
               </div>
-              <h3 className="text-sm font-black text-zinc-950 mt-0.5">
+              <h3 className="text-sm font-black text-zinc-950 mt-0.5 whitespace-nowrap truncate">
                 {previewDayConfig.label}&rsquo;s Generated Slots
               </h3>
-              <p className="text-[11px] text-zinc-500">
+              <p className="text-[11px] text-zinc-500 line-clamp-1">
                 {previewDayConfig.isOpen
-                  ? `Slots available between ${previewDayConfig.openTime} and ${previewDayConfig.closeTime} (${slotDurationMinutes} mins each)`
-                  : 'Closed — Customers cannot book on this day'}
+                  ? `${previewDayConfig.openTime} – ${previewDayConfig.closeTime} (${slotDurationMinutes}m intervals)`
+                  : 'Closed on this day'}
               </p>
             </div>
 
             {previewDayConfig.isOpen ? (
               <div className="space-y-2">
-                <div className="text-[11px] font-bold text-zinc-600 flex items-center justify-between">
+                <div className="text-[11px] font-bold text-zinc-600 flex items-center justify-between whitespace-nowrap">
                   <span>Customer View ({previewSlots.length} slots):</span>
-                  <span className="text-emerald-700 font-bold">● Active in Booking Form</span>
+                  <span className="text-emerald-700 font-bold">● Active</span>
                 </div>
 
                 <div className="space-y-1.5 max-h-96 overflow-y-auto pr-1">
                   {previewSlots.map((slotStr, sIdx) => (
                     <div
                       key={sIdx}
-                      className="p-2 rounded-xl border border-zinc-200 bg-zinc-50 flex items-center justify-between text-xs"
+                      className="p-2 rounded-xl border border-zinc-200 bg-zinc-50 flex items-center justify-between text-xs whitespace-nowrap"
                     >
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-3.5 h-3.5 text-orange-600" />
-                        <span className="font-bold text-zinc-900">{slotStr}</span>
+                      <div className="flex items-center gap-2 whitespace-nowrap min-w-0">
+                        <Clock className="w-3.5 h-3.5 text-orange-600 shrink-0" />
+                        <span className="font-bold text-zinc-900 truncate">{slotStr}</span>
                       </div>
-                      <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md whitespace-nowrap shrink-0">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                         Available
                       </span>
                     </div>
@@ -477,13 +490,13 @@ export const ScheduleManagementPage: React.FC = () => {
           </div>
 
           {/* Quick Info Box */}
-          <div className="p-4 bg-orange-50/60 border border-orange-200 rounded-2xl text-xs space-y-2">
-            <div className="font-black text-orange-950 flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-orange-600" />
+          <div className="p-3.5 sm:p-4 bg-orange-50/60 border border-orange-200 rounded-2xl text-xs space-y-1.5">
+            <div className="font-black text-orange-950 flex items-center gap-1.5 whitespace-nowrap">
+              <ShieldCheck className="w-4 h-4 text-orange-600 shrink-0" />
               <span>Real-Time Slot Enforcement</span>
             </div>
             <p className="text-[11px] text-orange-900/80 leading-relaxed">
-              When an admin sets slot duration (e.g. 30 mins) and opening/closing hours, the customer booking page instantly reflects those exact slots. Return delivery slots have been removed as per your configuration.
+              When slot duration and hours are updated, customer booking slots adapt immediately in real-time.
             </p>
           </div>
         </div>
